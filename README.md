@@ -39,6 +39,7 @@ go get github.com/joeychilson/litequery
 - [x] `VACUUM`
 - [x] `WITH`
 - [x] `UNION`
+- [x] `UNION ALL`
 - [x] `ORDER BY`
 - [x] `GROUP BY`
 - [x] `HAVING`

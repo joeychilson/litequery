@@ -610,6 +610,18 @@ func (q *Query) FullJoin(table, condition string) *Query {
 	return q
 }
 
+// Union is a function that returns a UNION clause for the specified tables
+func (q *Query) Union() *Query {
+	q.query = append(q.query, " UNION "...)
+	return q
+}
+
+// UnionAll is a function that returns a UNION ALL clause for the specified tables
+func (q *Query) UnionAll() *Query {
+	q.query = append(q.query, " UNION ALL "...)
+	return q
+}
+
 // Having is a function that adds a HAVING clause to the query for the specified conditions
 func (q *Query) Having(condition string) *Query {
 	q.query = append(q.query, " HAVING "...)
