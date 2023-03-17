@@ -53,13 +53,8 @@ func (q *Query) Begin(mode string) *Query {
 }
 
 // Commit is a function that returns a COMMIT TRANSACTION query
-func Commit() *Query {
-	return getQuery().Commit()
-}
-
-// Commit is a function that returns a COMMIT TRANSACTION query
 func (q *Query) Commit() *Query {
-	q.query = append(q.query, "COMMIT TRANSACTION;"...)
+	q.query = append(q.query, " COMMIT TRANSACTION;"...)
 	return q
 }
 
@@ -169,14 +164,14 @@ type Column struct {
 }
 
 // CreateTable is a function that returns a CREATE TABLE query with the specified options
-func CreateTable(tableName string, columns []Column, options ...string) *Query {
-	return getQuery().CreateTable(tableName, columns, options...)
+func CreateTable(name string, columns []Column, options ...string) *Query {
+	return getQuery().CreateTable(name, columns, options...)
 }
 
 // CreateTable is a function that returns a CREATE TABLE query with the specified options
-func (q *Query) CreateTable(tableName string, columns []Column, options ...string) *Query {
+func (q *Query) CreateTable(name string, columns []Column, options ...string) *Query {
 	q.query = append(q.query, "CREATE TABLE "...)
-	q.query = append(q.query, tableName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, " ("...)
 	for i, column := range columns {
 		if i > 0 {
@@ -233,27 +228,27 @@ func (q *Query) CreateTable(tableName string, columns []Column, options ...strin
 }
 
 // DropTable is a function that returns a DROP TABLE query for the specified table
-func DropTable(tableName string) *Query {
-	return getQuery().DropTable(tableName)
+func DropTable(table string) *Query {
+	return getQuery().DropTable(table)
 }
 
 // DropTable is a function that returns a DROP TABLE query for the specified table
-func (q *Query) DropTable(tableName string) *Query {
+func (q *Query) DropTable(table string) *Query {
 	q.query = append(q.query, "DROP TABLE "...)
-	q.query = append(q.query, tableName...)
+	q.query = append(q.query, table...)
 	q.query = append(q.query, ";"...)
 	return q
 }
 
 // AlterTableName is a function that returns a RENAME TABLE query
-func AlterTable(tableName string) *Query {
-	return getQuery().AlterTable(tableName)
+func AlterTable(table string) *Query {
+	return getQuery().AlterTable(table)
 }
 
 // AlterTableName builds the query string for a RENAME TABLE statement
-func (q *Query) AlterTable(tableName string) *Query {
+func (q *Query) AlterTable(table string) *Query {
 	q.query = append(q.query, "ALTER TABLE "...)
-	q.query = append(q.query, tableName...)
+	q.query = append(q.query, table...)
 	return q
 }
 
@@ -335,20 +330,20 @@ func (q *Query) DropColumn(columnName string) *Query {
 }
 
 // CreateIndex is a function that returns a CREATE INDEX query for the specified index and columns
-func CreateIndex(indexName, tableName string, columns []string, unique bool) *Query {
-	return getQuery().CreateIndex(indexName, tableName, columns, unique)
+func CreateIndex(name, table string, columns []string, unique bool) *Query {
+	return getQuery().CreateIndex(name, table, columns, unique)
 }
 
 // CreateIndex is a function that returns a CREATE INDEX query for the specified index and columns
-func (q *Query) CreateIndex(indexName, tableName string, columns []string, unique bool) *Query {
+func (q *Query) CreateIndex(name, table string, columns []string, unique bool) *Query {
 	q.query = append(q.query, "CREATE "...)
 	if unique {
 		q.query = append(q.query, "UNIQUE "...)
 	}
 	q.query = append(q.query, "INDEX "...)
-	q.query = append(q.query, indexName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, " ON "...)
-	q.query = append(q.query, tableName...)
+	q.query = append(q.query, table...)
 	q.query = append(q.query, " ("...)
 	q.query = append(q.query, strings.Join(columns, ", ")...)
 	q.query = append(q.query, ");"...)
@@ -356,61 +351,61 @@ func (q *Query) CreateIndex(indexName, tableName string, columns []string, uniqu
 }
 
 // DropIndex is a function that returns a DROP INDEX query for the specified index
-func DropIndex(indexName string) *Query {
-	return getQuery().DropIndex(indexName)
+func DropIndex(name string) *Query {
+	return getQuery().DropIndex(name)
 }
 
 // DropIndex is a function that returns a DROP INDEX query for the specified index
-func (q *Query) DropIndex(indexName string) *Query {
+func (q *Query) DropIndex(name string) *Query {
 	q.query = append(q.query, "DROP INDEX "...)
-	q.query = append(q.query, indexName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, ";"...)
 	return q
 }
 
 // CreateView is a function that returns a CREATE VIEW query for the specified view and SQL statement
-func CreateView(viewName, selectQuery string) *Query {
-	return getQuery().CreateView(viewName, selectQuery)
+func CreateView(name, query string) *Query {
+	return getQuery().CreateView(name, query)
 }
 
 // CreateView is a function that returns a CREATE VIEW query for the specified view and SQL statement
-func (q *Query) CreateView(viewName, selectQuery string) *Query {
+func (q *Query) CreateView(name, query string) *Query {
 	q.query = append(q.query, "CREATE VIEW "...)
-	q.query = append(q.query, viewName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, " AS "...)
-	q.query = append(q.query, selectQuery...)
+	q.query = append(q.query, query...)
 	q.query = append(q.query, ";"...)
 	return q
 }
 
 // DropView is a function that returns a DROP VIEW query for the specified view
-func DropView(viewName string) *Query {
-	return getQuery().DropView(viewName)
+func DropView(name string) *Query {
+	return getQuery().DropView(name)
 }
 
 // DropView is a function that returns a DROP VIEW query for the specified view
-func (q *Query) DropView(viewName string) *Query {
+func (q *Query) DropView(name string) *Query {
 	q.query = append(q.query, "DROP VIEW "...)
-	q.query = append(q.query, viewName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, ";"...)
 	return q
 }
 
 // CreateTrigger is a function that returns a CREATE TRIGGER query for the specified trigger
-func CreateTrigger(triggerName, tableName, when, event, actions string) *Query {
-	return getQuery().CreateTrigger(triggerName, tableName, when, event, actions)
+func CreateTrigger(name, table, when, event, actions string) *Query {
+	return getQuery().CreateTrigger(name, table, when, event, actions)
 }
 
 // CreateTrigger is a function that returns a CREATE TRIGGER query for the specified trigger
-func (q *Query) CreateTrigger(triggerName, tableName, when, event, actions string) *Query {
+func (q *Query) CreateTrigger(name, table, when, event, actions string) *Query {
 	q.query = append(q.query, "CREATE TRIGGER "...)
-	q.query = append(q.query, triggerName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, " "...)
 	q.query = append(q.query, when...)
 	q.query = append(q.query, " "...)
 	q.query = append(q.query, event...)
 	q.query = append(q.query, " ON "...)
-	q.query = append(q.query, tableName...)
+	q.query = append(q.query, table...)
 	q.query = append(q.query, " "...)
 	q.query = append(q.query, actions...)
 	q.query = append(q.query, ";"...)
@@ -418,14 +413,14 @@ func (q *Query) CreateTrigger(triggerName, tableName, when, event, actions strin
 }
 
 // DropTrigger is a function that returns a DROP TRIGGER query for the specified trigger
-func DropTrigger(triggerName string) *Query {
-	return getQuery().DropTrigger(triggerName)
+func DropTrigger(name string) *Query {
+	return getQuery().DropTrigger(name)
 }
 
 // DropTrigger is a function that returns a DROP TRIGGER query for the specified trigger
-func (q *Query) DropTrigger(triggerName string) *Query {
+func (q *Query) DropTrigger(name string) *Query {
 	q.query = append(q.query, "DROP TRIGGER "...)
-	q.query = append(q.query, triggerName...)
+	q.query = append(q.query, name...)
 	q.query = append(q.query, ";"...)
 	return q
 }
@@ -647,9 +642,9 @@ func (q *Query) OrderBy(columns ...string) *Query {
 }
 
 // IndexBy is a function that returns an INDEX BY clause for the specified index
-func (q *Query) IndexBy(indexName string) *Query {
+func (q *Query) IndexBy(name string) *Query {
 	q.query = append(q.query, " INDEX BY "...)
-	q.query = append(q.query, indexName...)
+	q.query = append(q.query, name...)
 	return q
 }
 
@@ -660,9 +655,9 @@ func (q *Query) NotIndex() *Query {
 }
 
 // Reindex is a function that returns a REINDEX clause
-func (q *Query) Reindex(indexName string) *Query {
+func (q *Query) Reindex(name string) *Query {
 	q.query = append(q.query, " REINDEX "...)
-	q.query = append(q.query, indexName...)
+	q.query = append(q.query, name...)
 	return q
 }
 
@@ -782,20 +777,20 @@ func (q *Query) Desc() *Query {
 }
 
 // Vacuum is a function that returns a VACUUM statement for the specified schema and file
-func Vacuum(schemaName, fileName string) *Query {
-	return getQuery().Vacuum(schemaName, fileName)
+func Vacuum(schema, file string) *Query {
+	return getQuery().Vacuum(schema, file)
 }
 
 // Vacuum is a function that returns a VACUUM statement for the specified schema and file
-func (q *Query) Vacuum(schemaName, fileName string) *Query {
+func (q *Query) Vacuum(schema, file string) *Query {
 	q.query = append(q.query, "VACUUM"...)
-	if schemaName != "" {
+	if schema != "" {
 		q.query = append(q.query, " "...)
-		q.query = append(q.query, schemaName...)
+		q.query = append(q.query, schema...)
 	}
-	if fileName != "" {
+	if file != "" {
 		q.query = append(q.query, " INTO "...)
-		q.query = append(q.query, fileName...)
+		q.query = append(q.query, file...)
 	}
 	q.query = append(q.query, ";"...)
 	return q

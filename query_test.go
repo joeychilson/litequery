@@ -18,11 +18,9 @@ func TestBegin(t *testing.T) {
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
 	}
-}
 
-func TestCommit(t *testing.T) {
-	q := litequery.Commit().String()
-	expected := "COMMIT TRANSACTION;"
+	q = litequery.Begin("").Commit().String()
+	expected = "BEGIN TRANSACTION; COMMIT TRANSACTION;"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
 	}
