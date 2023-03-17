@@ -702,19 +702,31 @@ func (q *Query) Returning(columns ...string) *Query {
 	return q
 }
 
-// With is a function that returns a WITH clause for the specified name and query
-func With(name string, query *Query) *Query {
-	return getQuery().With(name, query)
+// WithQuery is a struct that represents a WITH clause
+type WithQuery struct {
+	Name  string
+	Query *Query
 }
 
 // With is a function that returns a WITH clause for the specified name and query
-func (q *Query) With(name string, query *Query) *Query {
+func With(queries ...*WithQuery) *Query {
+	return getQuery().With(queries...)
+}
+
+// With is a function that returns a WITH clause for the specified name and query
+func (q *Query) With(queries ...*WithQuery) *Query {
 	q.query = append(q.query, "WITH "...)
-	q.query = append(q.query, name...)
-	q.query = append(q.query, " AS ("...)
-	q.query = append(q.query, query.query...)
-	q.query = append(q.query, ") "...)
-	q.args = append(q.args, query.args...)
+	for i, query := range queries {
+		if i > 0 {
+			q.query = append(q.query, ", "...)
+		}
+		q.query = append(q.query, query.Name...)
+		q.query = append(q.query, " AS ("...)
+		q.query = append(q.query, query.Query.query...)
+		q.args = append(q.args, query.Query.args...)
+		q.query = append(q.query, ")"...)
+	}
+	q.query = append(q.query, " "...)
 	return q
 }
 

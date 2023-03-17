@@ -320,8 +320,31 @@ func TestReturning(t *testing.T) {
 }
 
 func TestWith(t *testing.T) {
-	q := litequery.With("foo", litequery.Select("name", "age").From("foo")).Select("*").From("foo").String()
+	withQuery := litequery.WithQuery{
+		Name:  "foo",
+		Query: litequery.Select("name", "age").From("foo"),
+	}
+
+	q := litequery.With(&withQuery).Select("*").From("foo").String()
 	expected := "WITH foo AS (SELECT name, age FROM foo) SELECT * FROM foo"
+	if q != expected {
+		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+}
+
+func TestMultipleWith(t *testing.T) {
+	withQuery := litequery.WithQuery{
+		Name:  "foo",
+		Query: litequery.Select("name", "age").From("foo"),
+	}
+
+	withQuery2 := litequery.WithQuery{
+		Name:  "bar",
+		Query: litequery.Select("name", "age").From("bar"),
+	}
+
+	q := litequery.With(&withQuery, &withQuery2).Select("*").From("foo").String()
+	expected := "WITH foo AS (SELECT name, age FROM foo), bar AS (SELECT name, age FROM bar) SELECT * FROM foo"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
 	}
@@ -332,5 +355,21 @@ func TestVacuum(t *testing.T) {
 	expected := "VACUUM foo INTO foo.db;"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+}
+
+func BenchmarkMultipleWith(b *testing.B) {
+	withQuery := litequery.WithQuery{
+		Name:  "foo",
+		Query: litequery.Select("name", "age").From("foo"),
+	}
+
+	withQuery2 := litequery.WithQuery{
+		Name:  "bar",
+		Query: litequery.Select("name", "age").From("bar"),
+	}
+
+	for i := 0; i < b.N; i++ {
+		_ = litequery.With(&withQuery, &withQuery2).Select("*").From("foo").String()
 	}
 }
