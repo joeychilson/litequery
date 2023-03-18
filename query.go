@@ -743,39 +743,36 @@ func (q *Query) With(queries ...*WithQuery) *Query {
 }
 
 // And is a function that returns an AND WHERE clause for the specified expression and value
-func (q *Query) And(query *Query) *Query {
+func (q *Query) And(condition string) *Query {
 	q.query = append(q.query, " AND "...)
-	q.query = append(q.query, query.query...)
-	q.args = append(q.args, query.args...)
+	q.query = append(q.query, condition...)
 	return q
 }
 
 // Or is a function that returns an OR WHERE clause for the specified expression and value
-func (q *Query) Or(query *Query) *Query {
+func (q *Query) Or(condition string) *Query {
 	q.query = append(q.query, " OR "...)
-	q.query = append(q.query, query.query...)
-	q.args = append(q.args, query.args...)
+	q.query = append(q.query, condition...)
 	return q
 }
 
 // Not is a function that returns a NOT WHERE clause for the specified expression and value
-func (q *Query) Not(query *Query) *Query {
+func (q *Query) Not() *Query {
 	q.query = append(q.query, " NOT "...)
-	q.query = append(q.query, query.query...)
-	q.args = append(q.args, query.args...)
 	return q
 }
 
 // Like is a function that returns a LIKE WHERE clause for the specified column and value
-func (q *Query) Like(column string) *Query {
-	q.query = append(q.query, column...)
-	q.query = append(q.query, " LIKE ?"...)
+func (q *Query) Like(pattern string) *Query {
+	q.query = append(q.query, " LIKE '"...)
+	q.query = append(q.query, pattern...)
+	q.query = append(q.query, "'"...)
 	return q
 }
 
 // In is a function that returns an IN WHERE clause for the specified column and values
-func (q *Query) In(column string, values ...any) *Query {
-	q.query = append(q.query, column...)
+// Values are automatically added as query arguments
+func (q *Query) In(values ...any) *Query {
 	q.query = append(q.query, " IN ("...)
 	for i, value := range values {
 		if i > 0 {
