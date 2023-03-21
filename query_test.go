@@ -358,6 +358,20 @@ func TestVacuum(t *testing.T) {
 	}
 }
 
+func TestSubquery(t *testing.T) {
+	q := litequery.Select(
+		"(SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%') AS table_count",
+		"(SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name NOT LIKE 'sqlite_%') AS index_count",
+		"(SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name NOT LIKE 'sqlite_%') AS trigger_count",
+		"(SELECT COUNT(*) FROM sqlite_master WHERE type='view' AND name NOT LIKE 'sqlite_%') AS view_count",
+	).String()
+
+	expected := "SELECT (SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%') AS table_count, (SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name NOT LIKE 'sqlite_%') AS index_count, (SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name NOT LIKE 'sqlite_%') AS trigger_count, (SELECT COUNT(*) FROM sqlite_master WHERE type='view' AND name NOT LIKE 'sqlite_%') AS view_count"
+	if q != expected {
+		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+}
+
 func BenchmarkMultipleWith(b *testing.B) {
 	withQuery := litequery.WithQuery{
 		Name:  "foo",
