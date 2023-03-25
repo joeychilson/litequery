@@ -55,16 +55,22 @@ func TestSavepoint(t *testing.T) {
 }
 
 func TestDatabase(t *testing.T) {
-	q := litequery.AttachDatabase("foo.db", "foo").String()
-	expected := "ATTACH DATABASE 'foo.db' AS foo;"
+	q, args := litequery.AttachDatabase("foo.db", "foo").Query()
+	expected := "ATTACH DATABASE ? AS ?;"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
 	}
+	if args[0] != "foo.db" {
+		t.Errorf("Expected arg '%s', but got '%s'", "foo.db", args[0])
+	}
 
-	q = litequery.DetachDatabase("foo").String()
-	expected = "DETACH DATABASE foo;"
+	q, args = litequery.DetachDatabase("foo").Query()
+	expected = "DETACH DATABASE ?;"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+	if args[0] != "foo" {
+		t.Errorf("Expected arg '%s', but got '%s'", "foo", args[0])
 	}
 }
 
