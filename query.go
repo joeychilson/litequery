@@ -101,32 +101,32 @@ func (q *Query) ReleaseSavepoint(name string) *Query {
 }
 
 // AttachDatabase is a function that returns an ATTACH DATABASE query
-func AttachDatabase(database, alias string) *Query {
-	return getQuery().AttachDatabase(database, alias)
+func AttachDatabase(schema, name string) *Query {
+	return getQuery().AttachDatabase(schema, name)
 }
 
 // AttachDatabase is a function that returns an ATTACH DATABASE query
-func (q *Query) AttachDatabase(database, alias string) *Query {
+func (q *Query) AttachDatabase(schema, name string) *Query {
 	q.query = append(q.query, "ATTACH DATABASE "...)
-	q.query = append(q.query, "'"...)
-	q.query = append(q.query, database...)
-	q.query = append(q.query, "'"...)
+	q.query = append(q.query, "?"...)
 	q.query = append(q.query, " AS "...)
-	q.query = append(q.query, alias...)
+	q.query = append(q.query, "?"...)
 	q.query = append(q.query, ";"...)
+	q.args = append(q.args, schema, name)
 	return q
 }
 
 // DetachDatabase is a function that returns a DETACH DATABASE query
-func DetachDatabase(alias string) *Query {
-	return getQuery().DetachDatabase(alias)
+func DetachDatabase(name string) *Query {
+	return getQuery().DetachDatabase(name)
 }
 
 // DetachDatabase is a function that returns a DETACH DATABASE query
-func (q *Query) DetachDatabase(alias string) *Query {
+func (q *Query) DetachDatabase(name string) *Query {
 	q.query = append(q.query, "DETACH DATABASE "...)
-	q.query = append(q.query, alias...)
+	q.query = append(q.query, "?"...)
 	q.query = append(q.query, ";"...)
+	q.args = append(q.args, name)
 	return q
 }
 
