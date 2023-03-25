@@ -1,6 +1,7 @@
 package litequery_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/joeychilson/litequery"
@@ -219,6 +220,18 @@ func TestSelectFrom(t *testing.T) {
 	}
 }
 
+func TestIn(t *testing.T) {
+	q, args := litequery.Select("name", "age").From("foo").Where("id").In([]any{1, 2, 3}).Build()
+	expected := "SELECT name, age FROM foo WHERE id IN (?, ?, ?)"
+	if q != expected {
+		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+	expectedArgs := []interface{}{1, 2, 3}
+	if !reflect.DeepEqual(args, expectedArgs) {
+		t.Errorf("Expected args '%v', but got '%v'", expectedArgs, args)
+	}
+}
+
 func TestJoins(t *testing.T) {
 	q := litequery.Select("name", "age").From("foo").Join("bar", "foo.id = bar.id").Query()
 	expected := "SELECT name, age FROM foo JOIN bar ON foo.id = bar.id"
@@ -293,7 +306,7 @@ func TestIndexBy(t *testing.T) {
 	}
 }
 
-func TestNotInde(t *testing.T) {
+func TestNotIndex(t *testing.T) {
 	q := litequery.Select("name", "age").From("foo").NotIndex().Query()
 	expected := "SELECT name, age FROM foo NOT INDEX"
 	if q != expected {

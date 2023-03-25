@@ -772,14 +772,14 @@ func (q *Query) Like(pattern string) *Query {
 
 // In is a function that returns an IN WHERE clause for the specified column and values
 // Values are automatically added as query arguments
-func (q *Query) In(values ...any) *Query {
+func (q *Query) In(values []any) *Query {
 	q.query = append(q.query, " IN ("...)
-	for i, value := range values {
+	for i, v := range values {
 		if i > 0 {
 			q.query = append(q.query, ", "...)
 		}
 		q.query = append(q.query, '?')
-		q.args = append(q.args, value)
+		q.args = append(q.args, v)
 	}
 	q.query = append(q.query, ')')
 	return q
