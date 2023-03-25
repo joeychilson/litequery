@@ -824,8 +824,8 @@ func (q *Query) Raw(query string, args ...any) *Query {
 	return q
 }
 
-// String is a function that returns the query string
-func (q *Query) String() string {
+// Query is a function that returns the query string
+func (q *Query) Query() string {
 	query := string(q.query)
 	q.Reset()
 	return query
@@ -837,8 +837,8 @@ func (q *Query) Args(args ...any) *Query {
 	return q
 }
 
-// Query is a function that returns the query string and arguments
-func (q *Query) Query() (string, []any) {
+// Build is a function that returns the query string and arguments
+func (q *Query) Build() (string, []any) {
 	query := string(q.query)
 	args := q.args
 
