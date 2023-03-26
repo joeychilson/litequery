@@ -124,6 +124,33 @@ func TestAlterTable(t *testing.T) {
 	}
 }
 
+func TestUpdate(t *testing.T) {
+	q, args := litequery.Update("foo", "").Set([]*litequery.Field{
+		{Name: "bar", Value: "baz"},
+	}).
+		Where("id = ?").Args(1).
+		Build()
+	expected := "UPDATE foo SET bar = ? WHERE id = ?"
+	if q != expected {
+		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+	if args[0] != "baz" {
+		t.Errorf("Expected arg '%s', but got '%s'", "baz", args[0])
+	}
+	if args[1] != 1 {
+		t.Errorf("Expected arg '%d', but got '%d'", 1, args[1])
+	}
+
+	q = litequery.Update("foo", "").Set([]*litequery.Field{
+		{Name: "bar", Value: "baz", IsColumn: true},
+	}).Query()
+
+	expected = "UPDATE foo SET bar = baz"
+	if q != expected {
+		t.Errorf("Expected query '%s', but got '%s'", expected, q)
+	}
+}
+
 func TestCreateIndex(t *testing.T) {
 	q := litequery.CreateIndex("foo", "bar", []string{"name"}, true).Query()
 	expected := "CREATE UNIQUE INDEX foo ON bar (name);"

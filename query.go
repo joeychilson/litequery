@@ -527,8 +527,9 @@ func (q *Query) Update(table, condition string) *Query {
 
 // Field is a struct that represents a field in a table
 type Field struct {
-	Name  string
-	Value any
+	Name     string
+	Value    any
+	IsColumn bool
 }
 
 // Set is a function that returns a SET clause for the specified fields
@@ -536,11 +537,16 @@ func (q *Query) Set(fields []*Field) *Query {
 	q.query = append(q.query, " SET "...)
 	for i, field := range fields {
 		q.query = append(q.query, field.Name...)
-		q.query = append(q.query, " = ?"...)
+		if field.IsColumn {
+			q.query = append(q.query, " = "...)
+			q.query = append(q.query, field.Value.(string)...)
+		} else {
+			q.query = append(q.query, " = ?"...)
+			q.args = append(q.args, field.Value)
+		}
 		if i < len(fields)-1 {
 			q.query = append(q.query, ", "...)
 		}
-		q.args = append(q.args, field.Value)
 	}
 	return q
 }
