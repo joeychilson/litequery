@@ -76,7 +76,7 @@ func TestDatabase(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	q := litequery.CreateTable("foo", []litequery.Column{
+	q := litequery.CreateTable("foo", []*litequery.Column{
 		{Name: "id", Type: "INTEGER", PrimaryKey: true, AutoIncrement: true},
 		{Name: "name", Type: "TEXT", NotNull: true, Unique: true},
 		{Name: "age", Type: "INTEGER", NotNull: true, Default: "0", Check: "age > 0"},

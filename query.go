@@ -164,12 +164,12 @@ type Column struct {
 }
 
 // CreateTable is a function that returns a CREATE TABLE query with the specified options
-func CreateTable(name string, columns []Column, options ...string) *Query {
+func CreateTable(name string, columns []*Column, options ...string) *Query {
 	return getQuery().CreateTable(name, columns, options...)
 }
 
 // CreateTable is a function that returns a CREATE TABLE query with the specified options
-func (q *Query) CreateTable(name string, columns []Column, options ...string) *Query {
+func (q *Query) CreateTable(name string, columns []*Column, options ...string) *Query {
 	q.query = append(q.query, "CREATE TABLE "...)
 	q.query = append(q.query, name...)
 	q.query = append(q.query, " ("...)
