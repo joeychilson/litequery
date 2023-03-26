@@ -139,8 +139,8 @@ func TestCreateIndex(t *testing.T) {
 }
 
 func TestCreateView(t *testing.T) {
-	q := litequery.CreateView("foo", "SELECT * FROM bar").Query()
-	expected := "CREATE VIEW foo AS SELECT * FROM bar;"
+	q := litequery.CreateView("foo", "SELECT * FROM bar", true, true).Query()
+	expected := "CREATE TEMP VIEW IF NOT EXISTS foo AS SELECT * FROM bar;"
 	if q != expected {
 		t.Errorf("Expected query '%s', but got '%s'", expected, q)
 	}

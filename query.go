@@ -364,13 +364,20 @@ func (q *Query) DropIndex(name string) *Query {
 }
 
 // CreateView is a function that returns a CREATE VIEW query for the specified view and SQL statement
-func CreateView(name, query string) *Query {
-	return getQuery().CreateView(name, query)
+func CreateView(name, query string, temp bool, ifNotExists bool) *Query {
+	return getQuery().CreateView(name, query, temp, ifNotExists)
 }
 
 // CreateView is a function that returns a CREATE VIEW query for the specified view and SQL statement
-func (q *Query) CreateView(name, query string) *Query {
-	q.query = append(q.query, "CREATE VIEW "...)
+func (q *Query) CreateView(name, query string, temp bool, ifNotExists bool) *Query {
+	q.query = append(q.query, "CREATE "...)
+	if temp {
+		q.query = append(q.query, "TEMP "...)
+	}
+	q.query = append(q.query, "VIEW "...)
+	if ifNotExists {
+		q.query = append(q.query, "IF NOT EXISTS "...)
+	}
 	q.query = append(q.query, name...)
 	q.query = append(q.query, " AS "...)
 	q.query = append(q.query, query...)
